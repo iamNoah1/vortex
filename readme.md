@@ -22,13 +22,13 @@ You can interact with the application using curl. The following commands are ava
 ### Create a new key-value pair
 
 ``` bash
-curl -X PUT -H "Content-Type: application/json" -d '{"key":"your_key", "value":"your_value"}' http://localhost:8080/v1/kv/your_key
+curl -X PUT -H "Content-Type: application/json" -d '{"value":"your_value"}' http://localhost:8080/v1/kv/your_key
 ```
 
 Replace "your_key" and "your_value" with the actual key and value you want to put.
 
 
-## Get a key-value pair
+### Get a key-value pair
 
 ```bash
 curl -X GET http://localhost:8080/v1/kv/your_key
@@ -36,3 +36,29 @@ curl -X GET http://localhost:8080/v1/kv/your_key
 
 Replace "your_key" with the actual key you want to get.
 
+### Delete a key-value pair
+
+```bash
+curl -X DELETE http://localhost:8080/v1/kv/your_key
+```
+
+Replace "your_key" with the actual key you want to delete.
+
+## Testing
+
+### Run the tests
+
+To run the tests, navigate to the project directory and use the `go test` command:
+
+```bash
+go test ./...
+```
+
+### Test Coverage
+
+To run the tests with coverage, navigate to the project directory and use the `go test` command with the `-coverprofile` flag:
+
+```bash
+go test ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
