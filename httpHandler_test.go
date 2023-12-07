@@ -47,6 +47,25 @@ func TestGetKeyValuePairHandler(t *testing.T) {
 	// Add more assertions based on your application's logic
 }
 
+func TestGetKeyValuePairHandlerKeyNotFound(t *testing.T) {
+	req, err := http.NewRequest("GET", "/v1/kv/non_existing_key", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	responseRecorder := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/v1/kv/{key}", getKeyValuePairHandler).Methods("GET")
+
+	router.ServeHTTP(responseRecorder, req)
+
+	if status := responseRecorder.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+	}
+
+	// Add more assertions based on your application's logic
+}
+
 func TestDeleteKeyValuePairHandler(t *testing.T) {
 	req, err := http.NewRequest("DELETE", "/v1/kv/test_key", nil)
 	if err != nil {
