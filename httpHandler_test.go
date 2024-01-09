@@ -24,8 +24,6 @@ func TestPutKeyValuePairHandler(t *testing.T) {
 	if status := responseRecorder.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusCreated)
 	}
-
-	// Add more assertions based on your application's logic
 }
 
 func TestGetKeyValuePairHandler(t *testing.T) {
@@ -43,8 +41,6 @@ func TestGetKeyValuePairHandler(t *testing.T) {
 	if status := responseRecorder.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
-
-	// Add more assertions based on your application's logic
 }
 
 func TestGetKeyValuePairHandlerKeyNotFound(t *testing.T) {
@@ -62,8 +58,6 @@ func TestGetKeyValuePairHandlerKeyNotFound(t *testing.T) {
 	if status := responseRecorder.Code; status != http.StatusNotFound {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
 	}
-
-	// Add more assertions based on your application's logic
 }
 
 func TestDeleteKeyValuePairHandler(t *testing.T) {

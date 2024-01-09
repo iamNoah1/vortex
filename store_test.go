@@ -24,7 +24,6 @@ func TestThreadSafety(t *testing.T) {
 		"price:productID45":     "$999",
 		"location:office":       "Building 3, Floor 2",
 		"mode:system":           "Auto",
-		// ... Add more key-value pairs as needed
 	}
 
 	// Pre-populate the map

@@ -51,7 +51,7 @@ Replace "your_key" with the actual key you want to delete.
 To run the tests, navigate to the project directory and use the `go test` command:
 
 ```bash
-go test ./...
+go test ./... -race
 ```
 
 ### Test Coverage
@@ -59,6 +59,6 @@ go test ./...
 To run the tests with coverage, navigate to the project directory and use the `go test` command with the `-coverprofile` flag:
 
 ```bash
-go test ./... -coverprofile=coverage.out
+go test ./... -race -coverprofile=coverage.out
 go tool cover -html=coverage.out
 ```
