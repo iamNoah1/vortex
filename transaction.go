@@ -22,21 +22,28 @@ const (
 type TransactionLogger interface {
 	Put(key string, value string) error
 	Delete(key string) error
+	ReplayEvents() error
 }
 
 type FileTransactionLogger struct {
 	fileName string
+	sequence uint64
 }
 
 func NewFileTransactionLogger(filename string) (TransactionLogger, error) {
-	return &FileTransactionLogger{fileName: filename}, nil
+	return &FileTransactionLogger{fileName: filename, sequence: 0}, nil
 }
 
 func (f *FileTransactionLogger) Put(key string, value string) error {
-	return AppendToFile(f.fileName, fmt.Sprintf("%d\t%d\t%s\t%s", EventPut, key, value))
+	f.sequence++
+	return AppendToFile(f.fileName, fmt.Sprintf("%d\t%d\t%s\t%s", f.sequence, EventPut, key, value))
 }
 
 func (f *FileTransactionLogger) Delete(key string) error {
+	return nil
+}
+
+func (f *FileTransactionLogger) ReplayEvents() error {
 	return nil
 }
 

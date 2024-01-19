@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
+func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger TransactionLogger) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
@@ -52,7 +52,7 @@ func getKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
+func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger TransactionLogger) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 

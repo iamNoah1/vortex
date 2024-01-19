@@ -9,6 +9,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type MockTransactionLogger struct{}
+
+func (m *MockTransactionLogger) Put(key string, value string) error {
+	return nil
+}
+
+func (m *MockTransactionLogger) Delete(key string) error {
+	return nil
+}
+
+func (m *MockTransactionLogger) ReplayEvents() error {
+	return nil
+}
+
+var mockLogger TransactionLogger = &MockTransactionLogger{}
+
 func TestPutKeyValuePairHandler(t *testing.T) {
 	req, err := http.NewRequest("PUT", "/v1/kv/test_key", bytes.NewBuffer([]byte(`{"value":"test_value"}`)))
 	if err != nil {
@@ -17,7 +33,9 @@ func TestPutKeyValuePairHandler(t *testing.T) {
 
 	responseRecorder := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/v1/kv/{key}", putKeyValuePairHandler).Methods("PUT")
+	router.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
+		putKeyValuePairHandler(w, r, mockLogger)
+	}).Methods("PUT")
 
 	router.ServeHTTP(responseRecorder, req)
 
@@ -68,7 +86,9 @@ func TestDeleteKeyValuePairHandler(t *testing.T) {
 
 	responseRecorder := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/v1/kv/{key}", deleteKeyValuePairHandler).Methods("DELETE")
+	router.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
+		deleteKeyValuePairHandler(w, r, mockLogger)
+	}).Methods("DELETE")
 
 	router.ServeHTTP(responseRecorder, req)
 
