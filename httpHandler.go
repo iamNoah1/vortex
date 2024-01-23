@@ -27,6 +27,12 @@ func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger Trans
 		return
 	}
 
+	err = logger.Put(key, kv.Value)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -57,6 +63,12 @@ func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger Tr
 	key := vars["key"]
 
 	err := Delete(key)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = logger.Delete(key)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

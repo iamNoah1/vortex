@@ -19,6 +19,10 @@ const (
 	EventPut
 )
 
+func (s EventType) String() string {
+	return [...]string{"Delete", "Put"}[s]
+}
+
 type TransactionLogger interface {
 	Put(key string, value string) error
 	Delete(key string) error
@@ -36,11 +40,12 @@ func NewFileTransactionLogger(filename string) (TransactionLogger, error) {
 
 func (f *FileTransactionLogger) Put(key string, value string) error {
 	f.sequence++
-	return AppendToFile(f.fileName, fmt.Sprintf("%d\t%d\t%s\t%s", f.sequence, EventPut, key, value))
+	return AppendToFile(f.fileName, fmt.Sprintf("%d,%s,%s,%s", f.sequence, EventPut.String(), key, value))
 }
 
 func (f *FileTransactionLogger) Delete(key string) error {
-	return nil
+	f.sequence++
+	return AppendToFile(f.fileName, fmt.Sprintf("%d,%s,%s,%s", f.sequence, EventDelete.String(), key, ""))
 }
 
 func (f *FileTransactionLogger) ReplayEvents() error {
@@ -48,13 +53,13 @@ func (f *FileTransactionLogger) ReplayEvents() error {
 }
 
 func AppendToFile(fileName string, text string) error {
-	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
 	defer file.Close()
 
-	_, err = file.WriteString("\n" + text)
+	_, err = file.WriteString(text + "\n")
 	if err != nil {
 		return fmt.Errorf("failed to append to file: %w", err)
 	}

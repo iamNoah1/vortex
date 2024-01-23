@@ -15,7 +15,7 @@ type KeyValuePair struct {
 var logger TransactionLogger
 
 func main() {
-	logger, err := NewFileTransactionLogger("transaction.log")
+	logger, err := NewFileTransactionLogger("./transaction.log")
 	if err != nil {
 		log.Fatal("failed to create event logger: ", err)
 	}
