@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type Event struct {
@@ -21,6 +24,39 @@ const (
 
 func (s EventType) String() string {
 	return [...]string{"Delete", "Put"}[s]
+}
+
+func (e *Event) ToString() string {
+	return fmt.Sprintf("%d,%s,%s,%s", e.Sequence, e.EventType.String(), e.Key, *e.Value)
+}
+
+func NewEventFromString(eventStr string) (*Event, error) {
+	parts := strings.Split(eventStr, ",")
+	if len(parts) != 4 {
+		return nil, fmt.Errorf("invalid event string")
+	}
+
+	id, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return nil, fmt.Errorf("invalid ID: %v", err)
+	}
+
+	var eventType EventType
+	switch parts[1] {
+	case "Put":
+		eventType = EventPut
+	case "Delete":
+		eventType = EventDelete
+	default:
+		return nil, fmt.Errorf("invalid event type")
+	}
+
+	return &Event{
+		Sequence:  uint64(id),
+		EventType: eventType,
+		Key:       parts[2],
+		Value:     &parts[3],
+	}, nil
 }
 
 type TransactionLogger interface {
@@ -49,6 +85,27 @@ func (f *FileTransactionLogger) Delete(key string) error {
 }
 
 func (f *FileTransactionLogger) ReplayEvents() error {
+	lines, err := ReadFromFile(f.fileName)
+
+	if err != nil {
+		return fmt.Errorf("failed to read from file: %w", err)
+	}
+
+	for _, line := range lines {
+		event, err := NewEventFromString(line)
+		if err != nil {
+			return fmt.Errorf("failed to parse line: %w", err)
+		}
+
+		if event.EventType == EventPut {
+			err = Put(event.Key, *event.Value)
+		}
+
+		if err != nil {
+			return fmt.Errorf("failed to replay event: %w", err)
+		}
+	}
+
 	return nil
 }
 
@@ -65,4 +122,20 @@ func AppendToFile(fileName string, text string) error {
 	}
 
 	return nil
+}
+
+func ReadFromFile(fileName string) ([]string, error) {
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDONLY, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	return lines, nil
 }
