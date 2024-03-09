@@ -6,12 +6,8 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/iamNoah1/vortex/transaction"
 )
-
-type KeyValuePair struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
 
 func main() {
 	transactionFilePath := os.Getenv("TRANSACTION_LOG_FILE")
@@ -19,7 +15,7 @@ func main() {
 		transactionFilePath = "./transactions.log"
 	}
 
-	transactions, err := NewFileTransactionLogger(transactionFilePath)
+	transactions, err := transaction.NewFileTransactionLogger(transactionFilePath)
 	if err != nil {
 		log.Fatal("failed to create event logger: ", err)
 	}

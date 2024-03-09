@@ -1,9 +1,14 @@
-package main
+package store
 
 import (
 	"errors"
 	"sync"
 )
+
+type KeyValuePair struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
 
 var store = struct {
 	sync.RWMutex

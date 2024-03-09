@@ -6,13 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/iamNoah1/vortex/store"
+	"github.com/iamNoah1/vortex/transaction"
 )
 
-func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger TransactionLogger) {
+func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger transaction.TransactionLogger) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
-	var kv KeyValuePair
+	var kv store.KeyValuePair
 	err := json.NewDecoder(r.Body).Decode(&kv)
 	defer r.Body.Close()
 
@@ -21,7 +23,7 @@ func putKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger Trans
 		return
 	}
 
-	err = Put(key, kv.Value)
+	err = store.Put(key, kv.Value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -40,9 +42,9 @@ func getKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
-	kv, err := GetKeyValuePair(key)
+	kv, err := store.GetKeyValuePair(key)
 	if err != nil {
-		if errors.Is(err, ErrorNoSuchKey) {
+		if errors.Is(err, store.ErrorNoSuchKey) {
 			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,11 +60,11 @@ func getKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger TransactionLogger) {
+func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger transaction.TransactionLogger) {
 	vars := mux.Vars(r)
 	key := vars["key"]
 
-	err := Delete(key)
+	err := store.Delete(key)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

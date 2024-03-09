@@ -1,4 +1,4 @@
-package main
+package transaction
 
 import (
 	"bufio"
@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/iamNoah1/vortex/store"
 )
 
 type Event struct {
@@ -98,7 +100,7 @@ func (f *FileTransactionLogger) ReplayEvents() error {
 		}
 
 		if event.EventType == EventPut {
-			err = Put(event.Key, *event.Value)
+			err = store.Put(event.Key, *event.Value)
 		}
 
 		if err != nil {

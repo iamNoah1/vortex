@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/iamNoah1/vortex/transaction"
 )
 
 type MockTransactionLogger struct{}
@@ -23,7 +24,7 @@ func (m *MockTransactionLogger) ReplayEvents() error {
 	return nil
 }
 
-var mockLogger TransactionLogger = &MockTransactionLogger{}
+var mockLogger transaction.TransactionLogger = &MockTransactionLogger{}
 
 func TestPutKeyValuePairHandler(t *testing.T) {
 	req, err := http.NewRequest("PUT", "/v1/kv/test_key", bytes.NewBuffer([]byte(`{"value":"test_value"}`)))
