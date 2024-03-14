@@ -1,6 +1,8 @@
 # Vortex
 
-Vortex is a super simple key-value store written in Go.
+Vortex is a super simple key-value store written in Go. It provides a RESTful API to create, read, update, and delete key-value pairs.
+
+The application uses an in-memory map to store the key-value pairs. For restoring the state after a restart, the application writes the map to a file on disk. When the application starts, it reads the file and restores the map.
 
 ## Prerequisites
 
@@ -8,6 +10,14 @@ Vortex is a super simple key-value store written in Go.
 - curl (for testing)
 
 ## Running the App
+
+### Configuration
+
+The application uses the following environment variables for configuration:
+
+- `TRANSACTION_LOG_FILE`: The filepath to write the transaction log to. Default is `./transactions.log`.
+
+### Run 
 
 To run the app, navigate to the project directory and use the `go run` command:
 

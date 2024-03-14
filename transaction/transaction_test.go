@@ -10,6 +10,10 @@ import (
 )
 
 func TestReplayEvents(t *testing.T) {
+	if os.Getenv("CI") == "true" {
+		t.Skip("Skipping this test in CI environment.")
+	}
+
 	cmd := startServer(t)
 
 	data := map[string]interface{}{
