@@ -35,5 +35,7 @@ func main() {
 
 	r.HandleFunc("/v1/kv/{key}", getKeyValuePairHandler).Methods("GET")
 
+	r.HandleFunc("/v1/kv", getAllKeyValuePairsHandler).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

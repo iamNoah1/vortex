@@ -107,3 +107,35 @@ func TestWriteDeleteNotRacing(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+func TestGetAllKeyValuePairs(t *testing.T) {
+	keyValuePairs := map[string]string{
+		"email123":       "noah@github.com",
+		"productID45":    "Laptop",
+		"order456":       "Completed",
+		"sessionID9a2b":  "Active",
+		"config:timeout": "30s",
+	}
+
+	for key, value := range keyValuePairs {
+		err := Put(key, value)
+		if err != nil {
+			t.Fatalf("Failed to pre-populate map: %s", err)
+		}
+	}
+
+	kvs, err := GetAllKeyValuePairs()
+	if err != nil {
+		t.Fatalf("Failed to get all key-value pairs: %s", err)
+	}
+
+	if len(kvs) != len(keyValuePairs) {
+		t.Fatalf("Expected %d key-value pairs; got %d", len(keyValuePairs), len(kvs))
+	}
+
+	for _, kv := range kvs {
+		if keyValuePairs[kv.Key] != kv.Value {
+			t.Errorf("Unexpected value for key: %s", kv.Key)
+		}
+	}
+}

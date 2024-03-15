@@ -60,6 +60,21 @@ func getKeyValuePairHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getAllKeyValuePairsHandler(w http.ResponseWriter, r *http.Request) {
+	kvs, err := store.GetAllKeyValuePairs()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(kvs)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func deleteKeyValuePairHandler(w http.ResponseWriter, r *http.Request, logger transaction.TransactionLogger) {
 	vars := mux.Vars(r)
 	key := vars["key"]

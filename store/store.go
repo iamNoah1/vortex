@@ -29,6 +29,18 @@ func GetKeyValuePair(key string) (KeyValuePair, error) {
 	return KeyValuePair{key, value}, nil
 }
 
+func GetAllKeyValuePairs() ([]KeyValuePair, error) {
+	store.RLock()
+	defer store.RUnlock()
+
+	kvs := make([]KeyValuePair, 0, len(store.m))
+	for k, v := range store.m {
+		kvs = append(kvs, KeyValuePair{k, v})
+	}
+
+	return kvs, nil
+}
+
 func Put(key, value string) error {
 	store.Lock()
 	store.m[key] = value

@@ -46,6 +46,12 @@ curl -X GET http://localhost:8080/v1/kv/your_key
 
 Replace "your_key" with the actual key you want to get.
 
+### Get all key-value pairs
+
+```bash
+curl -X GET http://localhost:8080/v1/kv
+```
+
 ### Delete a key-value pair
 
 ```bash
