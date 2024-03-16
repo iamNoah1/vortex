@@ -1,9 +1,10 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/gorilla/mux"
 	"github.com/iamNoah1/vortex/transaction"
@@ -17,25 +18,29 @@ func main() {
 
 	transactions, err := transaction.NewFileTransactionLogger(transactionFilePath)
 	if err != nil {
-		log.Fatal("failed to create event logger: ", err)
+		log.Fatal().Msgf("failed to create event logger: %s", err)
 	}
 	err = transactions.ReplayEvents()
 	if err != nil {
-		log.Fatal("failed to replay events: ", err)
+		log.Fatal().Msgf("failed to replay events: %s", err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
+	router := mux.NewRouter()
+	router.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
 		putKeyValuePairHandler(w, r, transactions)
 	}).Methods("PUT")
 
-	r.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/v1/kv/{key}", func(w http.ResponseWriter, r *http.Request) {
 		deleteKeyValuePairHandler(w, r, transactions)
 	}).Methods("DELETE")
 
-	r.HandleFunc("/v1/kv/{key}", getKeyValuePairHandler).Methods("GET")
+	router.HandleFunc("/v1/kv/{key}", getKeyValuePairHandler).Methods("GET")
 
-	r.HandleFunc("/v1/kv", getAllKeyValuePairsHandler).Methods("GET")
+	router.HandleFunc("/v1/kv", getAllKeyValuePairsHandler).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Info().Msg("server started on port 8080")
+	err = http.ListenAndServe(":8080", router)
+	if err != nil {
+		log.Fatal().Msgf("failed to start server: %s", err)
+	}
 }
