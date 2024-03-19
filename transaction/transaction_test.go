@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"testing"
+	"time"
 )
 
 func TestReplayEvents(t *testing.T) {
@@ -15,6 +16,8 @@ func TestReplayEvents(t *testing.T) {
 	}
 
 	cmd := startServer(t)
+
+	time.Sleep(10 * time.Second)
 
 	data := map[string]interface{}{
 		"value": "myValue",
@@ -78,8 +81,8 @@ func TestReplayEvents(t *testing.T) {
 }
 
 func startServer(t *testing.T) *exec.Cmd {
-	cmd := exec.Command("go", "run", ".")
 	err := os.Setenv("TRANSACTION_LOG_FILE", "transaction_test.log")
+	cmd := exec.Command("go", "run", ".")
 	if err != nil {
 		t.Fatalf("Failed to set environment variable: %v", err)
 	}
