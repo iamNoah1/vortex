@@ -109,6 +109,7 @@ func TestWriteDeleteNotRacing(t *testing.T) {
 }
 
 func TestGetAllKeyValuePairs(t *testing.T) {
+	Clear()
 	keyValuePairs := map[string]string{
 		"email123":       "noah@github.com",
 		"productID45":    "Laptop",

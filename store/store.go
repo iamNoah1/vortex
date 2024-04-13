@@ -56,3 +56,9 @@ func Delete(key string) error {
 
 	return nil
 }
+
+func Clear() {
+	store.Lock()
+	store.m = make(map[string]string)
+	store.Unlock()
+}
