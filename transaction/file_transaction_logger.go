@@ -7,12 +7,6 @@ import (
 	"github.com/iamNoah1/vortex/utils"
 )
 
-type TransactionLogger interface {
-	Put(key string, value string) error
-	Delete(key string) error
-	ReplayEvents() error
-}
-
 type FileTransactionLogger struct {
 	fileName string
 	sequence uint64

@@ -44,3 +44,37 @@ func main() {
 		log.Fatal().Msgf("failed to start server: %s", err)
 	}
 }
+
+func createTransactionLogger() (transaction.TransactionLogger, error) {
+	transactionLoggerType := os.Getenv("TRANSACTION_LOGGER_TYPE")
+
+	if transactionLoggerType == "" {
+		transactionLoggerType = "file"
+	}
+
+	switch transactionLoggerType {
+	case "file":
+		transactionFilePath := os.Getenv("TRANSACTION_LOG_FILE")
+		if transactionFilePath == "" {
+			transactionFilePath = "./transactions.log"
+		}
+		transaction.NewFileTransactionLogger(transactionFilePath)
+	case "psql":
+		host := os.Getenv("DB_HOST")
+		dbName := os.Getenv("DB_NAME")
+		user := os.Getenv("DB_USER")
+		password := os.Getenv("DB_PASSWORD")
+
+		param := transaction.PostgresDBParams{
+			DbName:   dbName,
+			Host:     host,
+			User:     user,
+			Password: password,
+		}
+
+		//TODO make tablename configurable
+		return transaction.NewPsqlTransactionLogger(param, "transactions")
+	}
+	//TODO
+	return nil, nil
+}
